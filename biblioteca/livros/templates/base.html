@@ -11,19 +11,25 @@
 <body>
     <nav>
         {% if user.is_authenticated %}
+        {% if not user.is_staff %}
         <a href="{% url 'perfil' %}">Perfil</a>
+        {% else %}
         {% if user.is_authenticated and user.is_staff %}
+        {% if request.path != '/cadastrar/' %}
         <a href="{% url 'cadastrar_livro' %}">Cadastrar Livro</a>
         {% endif %}
-        {% if user.is_authenticated and user.is_staff and livro.id %}
-        <a href="{% url 'editar_livro' livro.id %}">Editar</a>
-        <a href="{% url 'remover_livro' livro.id %}">Remover</a>
+        {% if request.path == '/cadastrar/' %}
+        <a href="{% url 'home' %}">Voltar</a>
+        {% endif %}
+        {% endif %}
         {% endif %}
         <a href="{% url 'logout' %}">Sair</a>
         {% else %}
         <a href="{% url 'login' %}">Entrar</a>
+        <a href="{% url 'register' %}">Cadastrar</a>
         {% endif %}
     </nav>
+
     <hr>
     {% block content %}{% endblock %}
 </body>

@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
-from .models import Book, Profile
-from .forms import LivroForm
 
+from .models import Book, Profile
+from .forms import LivroForm, SimpleUserCreationForm
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import redirect
+from django.contrib import messages
+
+
 
 def is_admin(user):
     return user.is_authenticated and user.is_staff
@@ -26,21 +28,30 @@ def home(request):
     })
 
 def user_login(request):
+    users = [
+        {'tipo': 'Administrador', 'usuario': 'admin', 'senha': 'admin12345'},
+        {'tipo': 'Padrão', 'usuario': 'user', 'senha': 'user'},
+    ]
+
     if request.method == 'POST':
         user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         if user:
             login(request, user)
             return redirect('home')
-    return render(request, 'login.html')
+    return render(request, 'login.html', {'users': users})
+
+
 
 def user_logout(request):
     logout(request)
-    return redirect('home')
+    return redirect('login')
 
 @login_required
 def perfil(request):
     profile, _ = Profile.objects.get_or_create(user=request.user)
     return render(request, 'perfil.html', {'books': profile.books.all()})
+
+
 
 @login_required
 def add_to_profile(request, book_id):
@@ -58,9 +69,10 @@ def remove_from_profile(request, book_id):
 @user_passes_test(is_admin)
 def cadastrar_livro(request):
     if request.method == 'POST':
-        form = LivroForm(request.POST)
+        form = LivroForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Livro cadastrado com sucesso!')
             return redirect('home')
     else:
         form = LivroForm()
@@ -76,10 +88,41 @@ def editar_livro(request, livro_id):
             return redirect('home')
     else:
         form = LivroForm(instance=livro)
-    return render(request, 'editar_livro.html', {'form': form})
+    return render(request, 'editar.html', {'form': form})
 
-@user_passes_test(is_admin)
+@user_passes_test(lambda u: u.is_staff)
 def remover_livro(request, livro_id):
     livro = get_object_or_404(Book, id=livro_id)
     livro.delete()
     return redirect('home')
+
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+
+def register(request):
+    if request.method == 'POST':
+        form = SimpleUserCreationForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Usuário já existe.')
+                # Aqui, retorna o form com dados para mostrar erro, não vazio
+                return render(request, 'register.html', {'form': form})
+
+            User.objects.create_user(username=username, password=password)
+            messages.success(request, 'Cadastro realizado com sucesso!')
+            return redirect('login')
+
+        else:
+            messages.error(request, 'Dados inválidos. Tente novamente.')
+            # Retorna o form com os erros para o usuário corrigir
+            return render(request, 'register.html', {'form': form})
+
+    else:
+        # GET - formulário vazio
+        form = SimpleUserCreationForm()
+    return render(request, 'register.html', {'form': form})
+

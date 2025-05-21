@@ -14,4 +14,20 @@
         <button type="submit">Entrar</button>
     </form>
 </div>
+
+
+<div class="form-container">
+  <h3>Dados para teste</h3>
+  <ul>
+    {% for u in users %}
+    <br>
+    <li>
+      <strong>Usuário {{ u.tipo }}:</strong><br>
+      usuário: {{ u.usuario }}<br>
+      senha: {{ u.senha }}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
 {% endblock %}

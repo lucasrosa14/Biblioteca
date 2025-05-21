@@ -1,27 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Lista de Livros</h2>
-  {% if books %}
-    <ul class="livro-lista">
-      {% for book in books %}
-        <li>
-          <strong>{{ book.title }}</strong><br>
-          Autor: {{ book.author }}<br>
-          ISBN: {{ book.isbn }}<br>
-          
-          {% if user.is_authenticated %}
-            {% if book in user.profile.books.all %}
-              <span>Já inserido</span>
-            {% else %}
-              <a href="{% url 'add_to_profile' book.id %}" class="button">Adicionar ao Perfil</a>
-            {% endif %}
-          {% endif %}
-          
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Não há livros disponíveis.</p>
-  {% endif %}
+<h2>Lista de Livros</h2>
+{% if books %}
+<ul class="livro-lista">
+  {% for book in books %}
+  <li>
+    <strong>{{ book.title }}</strong><br>
+    Autor: {{ book.author }}<br>
+    ISBN: {{ book.isbn }}<br>
+
+    {% if book.capa %}
+      <img src="{{ book.capa.url }}" alt="Capa de {{ book.title }}" style="max-width: 150px; height: auto; display: block; margin-top: 10px;">
+    {% endif %}
+
+    {% if user.is_authenticated %}
+      <div style="margin-top: 10px;">
+        {% if book in user_books %}
+          <span>Já inserido</span>
+        {% else %}
+          <a href="{% url 'add_to_profile' book.id %}" class="button">Adicionar ao Perfil</a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if user.is_authenticated and user.is_staff %}
+      <div class="livro-acoes" style="margin-top: 10px;">
+        <a href="{% url 'editar_livro' book.id %}" class="button editar">Editar</a>
+        <a href="{% url 'remover_livro' book.id %}" class="button remover" onclick="return confirm('Tem certeza que deseja remover este livro?');">Remover</a>
+      </div>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Não há livros disponíveis.</p>
+{% endif %}
 {% endblock %}

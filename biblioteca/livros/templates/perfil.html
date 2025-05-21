@@ -1,20 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Meus Livros</h2>
-  {% if books %}
-    <ul class="livro-lista">
-      {% for book in books %}
-        <li>
-          <strong>{{ book.title }}</strong><br>
-          Autor: {{ book.author }}<br>
-          ISBN: {{ book.isbn }}<br>
-          <a href="{% url 'remove_from_profile' book.id %}" class="button">Remover</a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Você ainda não adicionou livros ao seu perfil.</p>
-  {% endif %}
-  <a href="{% url 'home' %}" class="button back-home">← Voltar para a Lista de Livros</a>
+<h2>Meus Livros</h2>
+{% if books %}
+<ul class="livro-lista">
+  {% for book in books %}
+  <li>
+    <strong>{{ book.title }}</strong><br>
+    Autor: {{ book.author }}<br>
+    ISBN: {{ book.isbn }}<br>
+
+    {% if book.capa %}
+    <img src="{{ book.capa.url }}" alt="Capa de {{ book.title }}"
+      style="max-width: 150px; height: auto; display: block; margin-top: 10px;">
+    {% endif %}
+
+    <div style="margin-top: 10px;">
+      <a href="{% url 'remove_from_profile' book.id %}" class="button remover"
+        onclick="return confirm('Tem certeza que deseja remover este livro do seu perfil?');">
+        Remover do Perfil
+      </a>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Você ainda não adicionou livros ao seu perfil.</p>
+{% endif %}
+<a href="{% url 'home' %}" class="button back-home">← Voltar para a Lista de Livros</a>
 {% endblock %}

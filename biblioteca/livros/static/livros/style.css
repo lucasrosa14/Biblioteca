@@ -23,6 +23,7 @@ nav a {
     text-decoration: none;
     margin: 0 1rem;
     font-weight: bold;
+    
 }
 
 nav a:hover {
@@ -153,3 +154,71 @@ form button {
 .back-home:hover {
   background: #5a6268;
 }
+
+.form-buttons {
+  display: flex;
+  gap: 10px; /* Espaço entre os botões */
+  margin-top: 1em;
+}
+
+.form-buttons .button {
+  flex: 1;          /* Faz os botões ocuparem espaço igual */
+  max-width: 150px; /* Limita a largura máxima */
+  text-align: center;
+  padding: 0.5em 1em;
+}
+
+.cancel-button {
+  background-color: #ccc; /* Cor diferente pra cancelar (opcional) */
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.livro-acoes {
+  margin-top: 0.5em;
+  display: flex;
+  gap: 10px;
+}
+
+.livro-acoes .button {
+  padding: 0.4em 0.8em;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+/* Estilo específico para Editar */
+.livro-acoes .editar {
+  background-color: #4CAF50; /* Verde */
+  color: white;
+}
+
+.livro-acoes .editar:hover {
+  background-color: #45a049;
+}
+
+/* Estilo específico para Remover */
+.livro-lista li .livro-acoes .remover {
+  background-color: #f44336; /* Vermelho */
+  color: white;
+  padding: 0.4em 0.8em;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.livro-lista li .livro-acoes .remover:hover {
+  background-color: #da190b; /* Vermelho mais escuro no hover */
+}
+

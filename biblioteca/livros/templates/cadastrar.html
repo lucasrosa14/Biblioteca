@@ -3,7 +3,7 @@
 {% block content %}
 <div class="form-container">
     <h2>Cadastrar Livro</h2>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <label for="id_title">Título</label>
         {{ form.title }}
@@ -13,6 +13,9 @@
 
         <label for ="id_isbn">ISBN</label> 
         {{ form.isbn }}
+
+        <label for="id_capa">Capa</label>
+        {{ form.capa }}
 
         <button type="submit">Cadastrar</button>
     </form>

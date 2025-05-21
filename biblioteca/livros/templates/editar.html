@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Editar Livro</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="form-buttons">
+      <button type="submit" class="button">Salvar Alterações</button>
+      <a href="{% url 'home' %}" class="button cancel-button">Cancelar</a>
+    </div>
+  </form>
+{% endblock %}

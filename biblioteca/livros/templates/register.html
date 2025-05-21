@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Cadastrar</h2>
+
+{% if messages %}
+  <div style="
+    max-width: 300px;
+    margin: 1rem auto;
+    padding: 0.75rem 1rem;
+    background-color: #f8d7da;  /* fundo vermelho claro */
+    color: #842029;              /* texto vermelho escuro */
+    border: 1px solid #f5c2c7;  /* borda vermelho claro */
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+  ">
+    {% for message in messages %}
+      {{ message }}
+    {% endfor %}
+  </div>
+{% endif %}
+
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Cadastrar</button>
+</form>
+
+<p>Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
+{% endblock %}
