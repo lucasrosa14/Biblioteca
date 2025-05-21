@@ -8,11 +8,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 
 
-
 def is_admin(user):
     return user.is_authenticated and user.is_staff
-
-
 
 def home(request):
     books = Book.objects.all()
@@ -40,8 +37,6 @@ def user_login(request):
             return redirect('home')
     return render(request, 'login.html', {'users': users})
 
-
-
 def user_logout(request):
     logout(request)
     return redirect('login')
@@ -49,21 +44,22 @@ def user_logout(request):
 @login_required
 def perfil(request):
     profile, _ = Profile.objects.get_or_create(user=request.user)
-    return render(request, 'perfil.html', {'books': profile.books.all()})
-
-
+    user_books = profile.books.all()
+    return render(request, 'perfil.html', {'user_books': user_books})
 
 @login_required
 def add_to_profile(request, book_id):
-    book = get_object_or_404(Book, id=book_id)
     profile, _ = Profile.objects.get_or_create(user=request.user)
+    book = get_object_or_404(Book, id=book_id)
     profile.books.add(book)
-    return redirect('perfil')
+    return redirect('home')
 
 @login_required
 def remove_from_profile(request, book_id):
+    profile = get_object_or_404(Profile, user=request.user)
     book = get_object_or_404(Book, id=book_id)
-    request.user.profile.books.remove(book)
+    profile.books.remove(book)
+    messages.error(request, "Livro excluído com sucesso.")
     return redirect('perfil')
 
 @user_passes_test(is_admin)
@@ -72,15 +68,15 @@ def cadastrar_livro(request):
         form = LivroForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Livro cadastrado com sucesso!')
+            messages.success(request, "Livro cadastrado com sucesso.")
             return redirect('home')
     else:
         form = LivroForm()
     return render(request, 'cadastrar.html', {'form': form})
 
 @user_passes_test(is_admin)
-def editar_livro(request, livro_id):
-    livro = get_object_or_404(Book, id=livro_id)
+def editar_livro(request, book_id):
+    livro = get_object_or_404(Book, id=book_id)
     if request.method == 'POST':
         form = LivroForm(request.POST, instance=livro)
         if form.is_valid():
@@ -91,14 +87,19 @@ def editar_livro(request, livro_id):
     return render(request, 'editar.html', {'form': form})
 
 @user_passes_test(lambda u: u.is_staff)
-def remover_livro(request, livro_id):
-    livro = get_object_or_404(Book, id=livro_id)
-    livro.delete()
-    return redirect('home')
+def remover_livro(request, book_id):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        messages.error(request, "Você não tem permissão para excluir livros.")
+        return redirect('home')
 
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
+    try:
+        livro = Book.objects.get(id=book_id)
+        livro.delete()
+        messages.success(request, "Livro removido com sucesso.")
+    except Book.DoesNotExist:
+        messages.error(request, "Livro não encontrado ou já removido.")
+    
+    return redirect('home')
 
 def register(request):
     if request.method == 'POST':

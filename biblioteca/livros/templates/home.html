@@ -10,28 +10,78 @@
     Autor: {{ book.author }}<br>
     ISBN: {{ book.isbn }}<br>
 
-    {% if book.capa %}
-      <img src="{{ book.capa.url }}" alt="Capa de {{ book.title }}" style="max-width: 150px; height: auto; display: block; margin-top: 10px;">
+    {% if book.get_capa %}
+    <img src="{{ book.get_capa }}" alt="Capa de {{ book.title }}" class="capa-livro"
+      style="max-width: 150px; height: auto; display: block; margin-top: 10px;">
     {% endif %}
 
-    {% if user.is_authenticated %}
-      <div style="margin-top: 10px;">
-        {% if book in user_books %}
-          <span>Já inserido</span>
-        {% else %}
-          <a href="{% url 'add_to_profile' book.id %}" class="button">Adicionar ao Perfil</a>
-        {% endif %}
-      </div>
+    {% if user.is_authenticated and not user.is_staff %}
+    <div style="margin-top: 10px;">
+      {% if book in user_books %}
+      <span style="
+        display: inline-block; 
+        padding: 5px 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 4px; 
+        background-color: #f9f9f9;
+      ">
+        Já inserido
+      </span>
+      {% else %}
+      <a href="{% url 'add_to_profile' book.id %}" class="button">Adicionar a Estante</a>
+      {% endif %}
+    </div>
     {% endif %}
 
     {% if user.is_authenticated and user.is_staff %}
-      <div class="livro-acoes" style="margin-top: 10px;">
-        <a href="{% url 'editar_livro' book.id %}" class="button editar">Editar</a>
-        <a href="{% url 'remover_livro' book.id %}" class="button remover" onclick="return confirm('Tem certeza que deseja remover este livro?');">Remover</a>
-      </div>
+    <div class="livro-acoes" style="margin-top: 10px;">
+      <a href="{% url 'editar_livro' book.id %}" class="button editar">Editar</a>
+      <a href="#" class="button remover btn-remover" data-url="{% url 'remover_livro' book.id %}">Remover</a>
+    </div>
     {% endif %}
   </li>
   {% endfor %}
+
+  {% block extra_modal %}
+  <div id="confirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+    background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:9999;">
+    <div
+      style="background:#fff; padding:20px; border-radius:8px; max-width:400px; width:90%; text-align:center; margin:auto;">
+      <p>Tem certeza que deseja remover este livro?</p>
+      <button id="confirmYes" style="margin-right:10px;">Sim</button>
+      <button id="confirmNo">Não</button>
+    </div>
+  </div>
+  {% endblock %}
+
+  {% block extra_script %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const modal = document.getElementById('confirmModal');
+      const btnYes = document.getElementById('confirmYes');
+      const btnNo = document.getElementById('confirmNo');
+      let urlToGo = '';
+
+      document.querySelectorAll('.btn-remover').forEach(btn => {
+        btn.addEventListener('click', function (event) {
+          event.preventDefault();
+          urlToGo = this.getAttribute('data-url');
+          modal.style.display = 'flex';
+        });
+      });
+
+      btnYes.addEventListener('click', function () {
+        window.location.href = urlToGo;
+        
+      });
+
+      btnNo.addEventListener('click', function () {
+        modal.style.display = 'none';
+        urlToGo = '';
+      });
+    });
+  </script>
+  {% endblock %}
 </ul>
 {% else %}
 <p>Não há livros disponíveis.</p>

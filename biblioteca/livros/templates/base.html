@@ -12,15 +12,16 @@
     <nav>
         {% if user.is_authenticated %}
         {% if not user.is_staff %}
-        <a href="{% url 'perfil' %}">Perfil</a>
+        {% if request.path == '/perfil/' %}
+        <a href="{% url 'home' %}">← Voltar</a>
         {% else %}
-        {% if user.is_authenticated and user.is_staff %}
+        <a href="{% url 'perfil' %}">Minha Estante</a>
+        {% endif %}
+        {% else %}
         {% if request.path != '/cadastrar/' %}
         <a href="{% url 'cadastrar_livro' %}">Cadastrar Livro</a>
-        {% endif %}
-        {% if request.path == '/cadastrar/' %}
-        <a href="{% url 'home' %}">Voltar</a>
-        {% endif %}
+        {% else %}
+        <a href="{% url 'home' %}">← Voltar</a>
         {% endif %}
         {% endif %}
         <a href="{% url 'logout' %}">Sair</a>
@@ -30,8 +31,14 @@
         {% endif %}
     </nav>
 
+
     <hr>
     {% block content %}{% endblock %}
+
+    {% block extra_modal %}{% endblock %}
+    {% block extra_script %}{% endblock %}
+
+
 </body>
 
 </html>

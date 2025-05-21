@@ -1,10 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Meus Livros</h2>
-{% if books %}
+<h2>Minha Estante</h2>
+
+{% if messages %}
+  <div class="msg-excluido">
+    {% for message in messages %}
+      {% if message.tags == 'error' %}
+        {{ message }}
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if user_books %}
 <ul class="livro-lista">
-  {% for book in books %}
+  {% for book in user_books %}
   <li>
     <strong>{{ book.title }}</strong><br>
     Autor: {{ book.author }}<br>
@@ -13,16 +24,51 @@
     {% if book.capa %}
     <img src="{{ book.capa.url }}" alt="Capa de {{ book.title }}"
       style="max-width: 150px; height: auto; display: block; margin-top: 10px;">
+    {% elif book.capa_url %}
+    <img src="{{ book.capa_url }}" alt="Capa de {{ book.title }}"
+      style="max-width: 150px; height: auto; display: block; margin-top: 10px;">
     {% endif %}
 
     <div style="margin-top: 10px;">
-      <a href="{% url 'remove_from_profile' book.id %}" class="button remover"
-        onclick="return confirm('Tem certeza que deseja remover este livro do seu perfil?');">
-        Remover do Perfil
+      <a href="javascript:void(0);" onclick="openConfirmModal({{ book.id }})" class="button remover">
+        Remover da Estante
       </a>
     </div>
+
   </li>
   {% endfor %}
+
+  {% block extra_modal %}
+  <div id="confirmExclusionModal" class="modal">
+    <div class="modal-content">
+      <p>Tem certeza que deseja remover este livro da sua estante?</p>
+      <button id="confirmBtn" class="button remover">Sim</button>
+      <button id="cancelBtn" class="button">Cancelar</button>
+    </div>
+  </div>
+  {% endblock %}
+  {% block extra_script %}
+  <script>
+        let bookIdToRemove = null;
+
+        function openConfirmModal(bookId) {
+            bookIdToRemove = bookId;
+            document.getElementById('confirmExclusionModal').style.display = 'block';
+        }
+
+        document.getElementById('cancelBtn').onclick = function () {
+            document.getElementById('confirmExclusionModal').style.display = 'none';
+        }
+
+        document.getElementById('confirmBtn').onclick = function () {
+            if (bookIdToRemove) {
+                const url = "{% url 'remove_from_profile' 0 %}".replace('/0/', '/' + bookIdToRemove + '/');
+                window.location.href = url;
+            }
+        }
+    </script>
+    {% endblock %}
+  
 </ul>
 {% else %}
 <p>Você ainda não adicionou livros ao seu perfil.</p>
