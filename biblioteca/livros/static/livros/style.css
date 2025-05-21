@@ -113,3 +113,43 @@ form button {
     display: inline-block;
 }
 
+.livro-lista {
+  list-style: none;
+  padding: 0;
+}
+
+.livro-lista li {
+  background: #f9f9f9;
+  margin-bottom: 15px;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.livro-lista li .button {
+  margin-top: 8px;
+  display: inline-block;
+  color: #fff;
+  background: #007bff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.livro-lista li .button:hover {
+  background: #0056b3;
+}
+
+.back-home {
+  margin-top: 20px;
+  display: inline-block;
+  color: #fff;
+  background: #6c757d;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.back-home:hover {
+  background: #5a6268;
+}

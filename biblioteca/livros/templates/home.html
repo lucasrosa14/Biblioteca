@@ -1,23 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Lista de Livros</h2>
-
-<ul class="grid">
-  {% for book in books %}
-    <li class="card">
-      <strong>{{ book.title }}</strong>
-      <small>{{ book.author }}</small>
-      {% if user.is_authenticated %}
-        <div class="card-actions">
-          {% if book in user_books %}
-            <span>✔ Já adicionado</span>
-          {% else %}
-            <a href="{% url 'add_to_profile' book.id %}" class="button">Adicionar</a>
+  <h2>Lista de Livros</h2>
+  {% if books %}
+    <ul class="livro-lista">
+      {% for book in books %}
+        <li>
+          <strong>{{ book.title }}</strong><br>
+          Autor: {{ book.author }}<br>
+          ISBN: {{ book.isbn }}<br>
+          
+          {% if user.is_authenticated %}
+            {% if book in user.profile.books.all %}
+              <span>Já inserido</span>
+            {% else %}
+              <a href="{% url 'add_to_profile' book.id %}" class="button">Adicionar ao Perfil</a>
+            {% endif %}
           {% endif %}
-        </div>
-      {% endif %}
-    </li>
-  {% endfor %}
-</ul>
+          
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Não há livros disponíveis.</p>
+  {% endif %}
 {% endblock %}
