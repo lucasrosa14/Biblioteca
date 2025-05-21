@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Meus Livros</h2>
+
+{% if books %}
+<ul class="grid">
+  {% for book in books %}
+    <li class="card">
+      <strong>{{ book.title }}</strong>
+      <small>{{ book.author }}</small>
+      <small>{{ book.isbn }}</small>
+      <div class="card-actions">
+        <a href="{% url 'remove_from_profile' book.id %}" class="button">Remover</a>
+      </div>
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Você ainda não adicionou livros ao seu perfil.</p>
+{% endif %}
+<a href="{% url 'home' %}" class="button back-home">← Voltar para a Lista de Livros</a>
+{% endblock %}
