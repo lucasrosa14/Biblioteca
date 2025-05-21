@@ -110,20 +110,22 @@ def register(request):
 
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'Usuário já existe.')
-                # Aqui, retorna o form com dados para mostrar erro, não vazio
                 return render(request, 'register.html', {'form': form})
 
             User.objects.create_user(username=username, password=password)
-            messages.success(request, 'Cadastro realizado com sucesso!')
-            return redirect('login')
+            # Ao invés de redirect, renderiza a página com sucesso
+            return render(request, 'register.html', {
+                'form': SimpleUserCreationForm(),  # formulário limpo
+                'success': True,
+                'username': username,
+            })
 
         else:
             messages.error(request, 'Dados inválidos. Tente novamente.')
-            # Retorna o form com os erros para o usuário corrigir
             return render(request, 'register.html', {'form': form})
 
     else:
-        # GET - formulário vazio
         form = SimpleUserCreationForm()
     return render(request, 'register.html', {'form': form})
+
 

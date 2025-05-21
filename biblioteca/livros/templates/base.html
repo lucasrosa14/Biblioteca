@@ -10,6 +10,15 @@
 
 <body>
     <nav>
+        {% if request.path == '/login/' %}
+        <!-- Na página de login: só mostrar o link para cadastrar -->
+        <a href="{% url 'register' %}">Cadastrar</a>
+
+        {% elif request.path == '/register/' %}
+        <!-- Na página de cadastro: só mostrar o link para entrar -->
+        <a href="{% url 'login' %}">Entrar</a>
+
+        {% else %}
         {% if user.is_authenticated %}
         {% if not user.is_staff %}
         {% if request.path == '/perfil/' %}
@@ -29,7 +38,10 @@
         <a href="{% url 'login' %}">Entrar</a>
         <a href="{% url 'register' %}">Cadastrar</a>
         {% endif %}
+        {% endif %}
     </nav>
+
+
 
 
     <hr>
