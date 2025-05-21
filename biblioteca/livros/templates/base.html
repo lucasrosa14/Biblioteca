@@ -1,22 +1,31 @@
- {% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Biblioteca</title>
 
-<link rel="stylesheet" href="{% static 'livros/style.css' %}">
+    <link rel="stylesheet" href="{% static 'livros/style.css' %}">
 </head>
+
 <body>
     <nav>
         {% if user.is_authenticated %}
-            <a href="{% url 'perfil' %}">Perfil</a>
-            <a href="{% url 'cadastrar_livro' %}">Cadastrar Livro</a>
-            <a href="{% url 'logout' %}">Sair</a>
+        <a href="{% url 'perfil' %}">Perfil</a>
+        {% if user.is_authenticated and user.is_staff %}
+        <a href="{% url 'cadastrar_livro' %}">Cadastrar Livro</a>
+        {% endif %}
+        {% if user.is_authenticated and user.is_staff and livro.id %}
+        <a href="{% url 'editar_livro' livro.id %}">Editar</a>
+        <a href="{% url 'remover_livro' livro.id %}">Remover</a>
+        {% endif %}
+        <a href="{% url 'logout' %}">Sair</a>
         {% else %}
-            <a href="{% url 'login' %}">Entrar</a>
+        <a href="{% url 'login' %}">Entrar</a>
         {% endif %}
     </nav>
     <hr>
     {% block content %}{% endblock %}
 </body>
+
 </html>

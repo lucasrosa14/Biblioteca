@@ -4,6 +4,12 @@ from django.contrib.auth.decorators import login_required
 from .models import Book, Profile
 from .forms import LivroForm
 
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import redirect
+
+def is_admin(user):
+    return user.is_authenticated and user.is_staff
+
 
 
 def home(request):
@@ -49,7 +55,7 @@ def remove_from_profile(request, book_id):
     request.user.profile.books.remove(book)
     return redirect('perfil')
 
-@login_required
+@user_passes_test(is_admin)
 def cadastrar_livro(request):
     if request.method == 'POST':
         form = LivroForm(request.POST)
@@ -59,3 +65,21 @@ def cadastrar_livro(request):
     else:
         form = LivroForm()
     return render(request, 'cadastrar.html', {'form': form})
+
+@user_passes_test(is_admin)
+def editar_livro(request, livro_id):
+    livro = get_object_or_404(Book, id=livro_id)
+    if request.method == 'POST':
+        form = LivroForm(request.POST, instance=livro)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = LivroForm(instance=livro)
+    return render(request, 'editar_livro.html', {'form': form})
+
+@user_passes_test(is_admin)
+def remover_livro(request, livro_id):
+    livro = get_object_or_404(Book, id=livro_id)
+    livro.delete()
+    return redirect('home')
