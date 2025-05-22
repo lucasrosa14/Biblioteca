@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 
-from .models import Book, Profile
+from .models import Book, Profile, UserProfile
 from .forms import LivroForm, SimpleUserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -43,9 +43,29 @@ def user_logout(request):
 
 @login_required
 def perfil(request):
-    profile, _ = Profile.objects.get_or_create(user=request.user)
+    user = request.user
+
+    try:
+        user_profile = user.userprofile
+    except UserProfile.DoesNotExist:
+        user_profile = None
+
+    # Aqui, busca ou cria sempre um Profile
+    profile, _ = Profile.objects.get_or_create(user=user)
+
     user_books = profile.books.all()
-    return render(request, 'perfil.html', {'user_books': user_books})
+    livros_na_estante = user_books.count()
+
+    context = {
+        'user': user,
+        'profile': profile,  # perfil de livros
+        'user_profile': user_profile,  # perfil pessoal
+        'user_books': user_books,
+        'livros_na_estante': livros_na_estante,
+    }
+    return render(request, 'perfil.html', context)
+
+
 
 @login_required
 def add_to_profile(request, book_id):
@@ -56,11 +76,15 @@ def add_to_profile(request, book_id):
 
 @login_required
 def remove_from_profile(request, book_id):
-    profile = get_object_or_404(Profile, user=request.user)
-    book = get_object_or_404(Book, id=book_id)
-    profile.books.remove(book)
-    messages.error(request, "Livro excluído com sucesso.")
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    try:
+        book = Book.objects.get(id=book_id)
+        profile.books.remove(book)   # aqui, remove do profile.books, não user.books
+        messages.success(request, f'O livro "{book.title}" foi removido da sua estante.')
+    except Book.DoesNotExist:
+        messages.error(request, 'Livro não encontrado.')
     return redirect('perfil')
+
 
 @user_passes_test(is_admin)
 def cadastrar_livro(request):

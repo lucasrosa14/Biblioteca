@@ -1,5 +1,6 @@
 from django import forms
-from .models import Book
+from .models import Book, UserProfile
+
 
 class LivroForm(forms.ModelForm):
     class Meta:
@@ -7,5 +8,9 @@ class LivroForm(forms.ModelForm):
         fields = ['title', 'author', 'isbn', 'capa', 'capa_url']
 
 class SimpleUserCreationForm(forms.Form):
-    username = forms.CharField(label='Usuário', max_length=150)
-    password = forms.CharField(label='Senha', widget=forms.PasswordInput)
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput)
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=150)
+    sexo = forms.ChoiceField(choices=UserProfile.SEXO_CHOICES)
+    data_nascimento = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))

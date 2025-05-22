@@ -8,6 +8,7 @@ class Book(models.Model):
     capa = models.ImageField(upload_to='capas/', blank=True, null=True)
     capa_url = models.URLField(max_length=300, blank=True, null=True)
 
+    users = models.ManyToManyField(User, related_name='books') 
     def get_capa(self):
         # Prioriza o upload, se não tiver, usa a URL
         if self.capa:
@@ -25,4 +26,17 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"Perfil de {self.user.username}"
+    
+class UserProfile(models.Model):
+    SEXO_CHOICES = [
+        ('M', 'Masculino'),
+        ('F', 'Feminino'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    sexo = models.CharField(max_length=1, choices=SEXO_CHOICES)
+    data_nascimento = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
 

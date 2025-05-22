@@ -1,42 +1,64 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Minha Estante</h2>
+<h2>Perfil de {{ user.username }}</h2>
 
-{% if messages %}
+<div class="perfil-info">
+  <p><strong>Nome:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+
+  {% if user_profile %}
+  <p><strong>Sexo:</strong> {{ user_profile.get_sexo_display }}</p>
+  <p><strong>Data de Nascimento:</strong> {{ user_profile.data_nascimento|date:"j \\d\\e F \\d\\e Y" }}</p>
+
+  {% else %}
+  <p>Perfil incompleto.</p>
+  {% endif %}
+</div>
+
+<hr>
+
+<div class="estante-info">
+  <h3>Minha Estante</h3>
+  <p><strong>Total de livros:</strong> {{ livros_na_estante }}</p>
+
+  {% if messages %}
   <div class="msg-excluido">
     {% for message in messages %}
-      {% if message.tags == 'error' %}
-        {{ message }}
+      {% if message.tags == 'success' %}
+        <p class="msg-sucesso">{{ message }}</p>
+      {% elif message.tags == 'error' %}
+        <p class="msg-erro">{{ message }}</p>
+      {% else %}
+        <p>{{ message }}</p>
       {% endif %}
     {% endfor %}
   </div>
 {% endif %}
 
-{% if user_books %}
-<ul class="livro-lista">
-  {% for book in user_books %}
-  <li>
-    <strong>{{ book.title }}</strong><br>
-    Autor: {{ book.author }}<br>
-    ISBN: {{ book.isbn }}<br>
+  {% if user_books %}
+  <ul class="livro-lista">
+    {% for book in user_books %}
+    <li>
+      <strong>{{ book.title }}</strong><br>
+      Autor: {{ book.author }}<br>
+      ISBN: {{ book.isbn }}<br>
 
-    {% if book.capa %}
-    <img src="{{ book.capa.url }}" alt="Capa de {{ book.title }}"
-      style="max-width: 150px; height: auto; display: block; margin-top: 10px;">
-    {% elif book.capa_url %}
-    <img src="{{ book.capa_url }}" alt="Capa de {{ book.title }}"
-      style="max-width: 150px; height: auto; display: block; margin-top: 10px;">
-    {% endif %}
+      {% if book.capa %}
+      <img src="{{ book.capa.url }}" alt="Capa de {{ book.title }}"
+        style="max-width: 150px; height: auto; display: block; margin-top: 10px;">
+      {% elif book.capa_url %}
+      <img src="{{ book.capa_url }}" alt="Capa de {{ book.title }}"
+        style="max-width: 150px; height: auto; display: block; margin-top: 10px;">
+      {% endif %}
 
-    <div style="margin-top: 10px;">
-      <a href="javascript:void(0);" onclick="openConfirmModal({{ book.id }})" class="button remover">
-        Remover da Estante
-      </a>
-    </div>
-
-  </li>
-  {% endfor %}
+      <div style="margin-top: 10px;">
+        <a href="javascript:void(0);" onclick="openConfirmModal({{ book.id }})" class="button remover">
+          Remover da Estante
+        </a>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
 
   {% block extra_modal %}
   <div id="confirmExclusionModal" class="modal">
@@ -47,31 +69,33 @@
     </div>
   </div>
   {% endblock %}
+
   {% block extra_script %}
   <script>
-        let bookIdToRemove = null;
+    let bookIdToRemove = null;
 
-        function openConfirmModal(bookId) {
-            bookIdToRemove = bookId;
-            document.getElementById('confirmExclusionModal').style.display = 'block';
-        }
+    function openConfirmModal(bookId) {
+      bookIdToRemove = bookId;
+      document.getElementById('confirmExclusionModal').style.display = 'block';
+    }
 
-        document.getElementById('cancelBtn').onclick = function () {
-            document.getElementById('confirmExclusionModal').style.display = 'none';
-        }
+    document.getElementById('cancelBtn').onclick = function () {
+      document.getElementById('confirmExclusionModal').style.display = 'none';
+    }
 
-        document.getElementById('confirmBtn').onclick = function () {
-            if (bookIdToRemove) {
-                const url = "{% url 'remove_from_profile' 0 %}".replace('/0/', '/' + bookIdToRemove + '/');
-                window.location.href = url;
-            }
-        }
-    </script>
-    {% endblock %}
-  
-</ul>
-{% else %}
-<p>Você ainda não adicionou livros ao seu perfil.</p>
-{% endif %}
+    document.getElementById('confirmBtn').onclick = function () {
+      if (bookIdToRemove) {
+        const url = "{% url 'remove_from_profile' 0 %}".replace('/0/', '/' + bookIdToRemove + '/');
+        window.location.href = url;
+      }
+    }
+  </script>
+  {% endblock %}
+
+  {% else %}
+  <p>Você ainda não adicionou livros ao seu perfil.</p>
+  {% endif %}
+</div>
+
 <a href="{% url 'home' %}" class="button back-home">← Voltar para a Lista de Livros</a>
 {% endblock %}
