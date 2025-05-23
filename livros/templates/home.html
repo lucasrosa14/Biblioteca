@@ -28,15 +28,15 @@
         Já inserido
       </span>
       {% else %}
-      <a href="{% url 'add_to_profile' book.id %}" class="button">Adicionar a Estante</a>
+      <a href="{% url 'add_to_profile' book.id %}" class="button" data-testid="add-to-profile">Adicionar a Estante</a>
       {% endif %}
     </div>
     {% endif %}
 
     {% if user.is_authenticated and user.is_staff %}
     <div class="livro-acoes" style="margin-top: 10px;">
-      <a href="{% url 'editar_livro' book.id %}" class="button editar">Editar</a>
-      <a href="#" class="button remover btn-remover" data-url="{% url 'remover_livro' book.id %}">Remover</a>
+      <a href="{% url 'editar_livro' book.id %}" class="button editar" data-testid="edit">Editar</a>
+      <a href="#" class="button remover btn-remover" data-url="{% url 'remover_livro' book.id %}" data-testid="remove">Remover</a>
     </div>
     {% endif %}
   </li>

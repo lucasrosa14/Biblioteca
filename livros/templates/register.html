@@ -27,7 +27,7 @@
       border-radius: 4px;
       text-decoration: none;
       font-weight: bold;
-    ">Ir para o Login</a>
+    " data-testid="login">Ir para o Login</a>
   </div>
 
 {% else %}
@@ -52,10 +52,10 @@
   <form method="post">
       {% csrf_token %}
       {{ form.as_p }}
-      <button type="submit">Cadastrar</button>
+      <button type="submit" data-testid="register-button">Cadastrar</button>
   </form>
 
-  <p>Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
+  <p>Já tem conta? <a href="{% url 'login' %}" data-testid="login">Entrar</a></p>
 {% endif %}
 
 {% endblock %}

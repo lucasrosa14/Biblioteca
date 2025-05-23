@@ -12,31 +12,31 @@
     <nav>
         {% if request.path == '/login/' %}
         <!-- Na página de login: só mostrar o link para cadastrar -->
-        <a href="{% url 'register' %}">Cadastrar</a>
+        <a href="{% url 'register' %}" data-testid="register">Cadastrar</a>
 
         {% elif request.path == '/register/' %}
         <!-- Na página de cadastro: só mostrar o link para entrar -->
-        <a href="{% url 'login' %}">Entrar</a>
+        <a href="{% url 'login' %}" data-testid="login">Entrar</a>
 
         {% else %}
         {% if user.is_authenticated %}
         {% if not user.is_staff %}
         {% if request.path == '/perfil/' %}
-        <a href="{% url 'home' %}">← Voltar</a>
+        <a href="{% url 'home' %}" data-testid="back">← Voltar</a>
         {% else %}
-        <a href="{% url 'perfil' %}">Minha Estante</a>
+        <a href="{% url 'perfil' %}" data-testid="perfil">Minha Estante</a>
         {% endif %}
         {% else %}
         {% if request.path != '/cadastrar/' %}
-        <a href="{% url 'cadastrar_livro' %}">Cadastrar Livro</a>
+        <a href="{% url 'cadastrar_livro' %}" data-testid="cadastrar">Cadastrar Livro</a>
         {% else %}
-        <a href="{% url 'home' %}">← Voltar</a>
+        <a href="{% url 'home' %}" data-testid="back">← Voltar</a>
         {% endif %}
         {% endif %}
-        <a href="{% url 'logout' %}">Sair</a>
+        <a href="{% url 'logout' %}" data-testid="logout">Sair</a>
         {% else %}
-        <a href="{% url 'login' %}">Entrar</a>
-        <a href="{% url 'register' %}">Cadastrar</a>
+        <a href="{% url 'login' %}" data-testid="login">Entrar</a>
+        <a href="{% url 'register' %}" data-testid="register">Cadastrar</a>
         {% endif %}
         {% endif %}
     </nav>

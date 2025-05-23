@@ -7,8 +7,8 @@
     {% csrf_token %}
     {{ form.as_p }}
     <div class="form-buttons">
-      <button type="submit" class="button">Salvar Alterações</button>
-      <a href="{% url 'home' %}" class="button cancel-button">Cancelar</a>
+      <button type="submit" class="button" data-testid="save-changes">Salvar Alterações</button>
+      <a href="{% url 'home' %}" class="button cancel-button" data-testid="cancel-changes">Cancelar</a>
     </div>
   </form>
 {% endblock %}

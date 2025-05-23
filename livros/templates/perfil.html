@@ -52,7 +52,7 @@
       {% endif %}
 
       <div style="margin-top: 10px;">
-        <a href="javascript:void(0);" onclick="openConfirmModal({{ book.id }})" class="button remover">
+        <a href="javascript:void(0);" onclick="openConfirmModal({{ book.id }})" class="button remover" data-testid="remove-book-{{ book.id }}">
           Remover da Estante
         </a>
       </div>
@@ -97,5 +97,5 @@
   {% endif %}
 </div>
 
-<a href="{% url 'home' %}" class="button back-home">← Voltar para a Lista de Livros</a>
+<a href="{% url 'home' %}" class="button back-home" data-testid="back">← Voltar para a Lista de Livros</a>
 {% endblock %}

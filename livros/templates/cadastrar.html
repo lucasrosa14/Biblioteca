@@ -1,26 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% load widget_tweaks %}
 <div class="form-container">
     <h2>Cadastrar Livro</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <label for="id_title">Título</label>
-        {{ form.title }}
+        {{ form.title |attr:"data-testid='titulo'" }}
 
         <label for="id_author">Autor</label>
-        {{ form.author }}
+        {{ form.author |attr:"data-testid='autor'" }}
 
         <label for="id_isbn">ISBN</label>
-        {{ form.isbn }}
+        {{ form.isbn |attr:"data-testid='isbn'" }}
 
         <label for="id_capa">Upload da Capa</label>
-        {{ form.capa }}
+        {{ form.capa|attr:"data-testid='capa'" }}
 
         <label for="id_capa_url">URL da Capa</label>
-        {{ form.capa_url }}
+        {{ form.capa_url |attr:"data-testid='capa_url'" }}
 
-        <button type="submit">Cadastrar</button>
+        <button type="submit" data-testid="cadastrar">Cadastrar</button>
     </form>
 </div>
 {% endblock %}
