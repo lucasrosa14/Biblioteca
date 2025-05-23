@@ -92,3 +92,7 @@ LOGIN_URL = '/login/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://biblioteca-6lyp.onrender.com'
+]
+
