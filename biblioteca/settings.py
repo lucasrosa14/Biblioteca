@@ -97,3 +97,5 @@ CSRF_TRUSTED_ORIGINS = [
     'https://biblioteca-6lyp.onrender.com'
 ]
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 120
