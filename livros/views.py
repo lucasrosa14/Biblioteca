@@ -131,25 +131,39 @@ def register(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
+            sexo = form.cleaned_data.get('sexo')
+            data_nascimento = form.cleaned_data.get('data_nascimento')
 
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'Usuário já existe.')
                 return render(request, 'register.html', {'form': form})
 
-            User.objects.create_user(username=username, password=password)
-            # Ao invés de redirect, renderiza a página com sucesso
+            # Cria o usuário
+            user = User.objects.create_user(username=username, password=password)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
+
+            # Cria o perfil associado
+            UserProfile.objects.create(
+                user=user,
+                sexo=sexo,
+                data_nascimento=data_nascimento
+            )
+
             return render(request, 'register.html', {
                 'form': SimpleUserCreationForm(),  # formulário limpo
                 'success': True,
                 'username': username,
             })
-
         else:
             messages.error(request, 'Dados inválidos. Tente novamente.')
             return render(request, 'register.html', {'form': form})
-
     else:
         form = SimpleUserCreationForm()
     return render(request, 'register.html', {'form': form})
+
 
 
