@@ -1,11 +1,13 @@
 import os
 from pathlib import Path
 
+import dj_database_url
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8c!sa4r(&#r_7+5h3em+@gfu)26%5_u8f0%6*zgk_2u&*9azh5'
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['local-library.onrender.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -47,10 +49,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'biblioteca.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(default='sqlite:///db.sqlite3')
 }
 
 
@@ -91,4 +90,5 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_URL = '/login/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
